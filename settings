@@ -1,0 +1,19 @@
+# Kubernetes version
+K8S_VERSION=stable-1.7
+
+# Google Cloud settings
+# set project
+PROJECT=replace_with_your_project
+# set region and zone
+ZONE=europe-west2-a
+
+# Server
+SERVER=kubeadm-solo-cluster
+
+# VM type
+MACHINE_TYPE=n1-standard-2
+
+# Disk type (pd-ssd pd-standard)
+DISK_TYPE=pd-standard
+# Disk size
+DISK_SIZE=350GB
