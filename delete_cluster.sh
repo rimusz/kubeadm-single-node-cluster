@@ -4,7 +4,7 @@
 source settings
 
 # Cleanup
-gcloud compute instances delete ${SERVER}
+gcloud compute instances delete --zone ${ZONE} ${SERVER}
 
 gcloud compute firewall-rules delete default-allow-${SERVER}
 
