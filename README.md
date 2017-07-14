@@ -1,6 +1,6 @@
 # kubeadm: Single Node Kubernetes Cluster
 
-This tutorial will walk you through bootstrapping a single-node Kubernetes cluster on [Google Compute Engine](https://cloud.google.com/compute/) using [kubeadm](https://github.com/kubernetes/kubeadm).
+This tutorial (based on Kelsey's awesome [tutorial](https://github.com/kelseyhightower/kubeadm-single-node-cluster) with some automation bits added) will walk you through bootstrapping a single-node Kubernetes cluster on [Google Compute Engine](https://cloud.google.com/compute/) using [kubeadm](https://github.com/kubernetes/kubeadm).
 
 
 ## TL;DR
