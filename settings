@@ -3,9 +3,9 @@ K8S_VERSION=stable-1.8
 
 # Google Cloud settings
 # set project
-PROJECT=replace_with_your_project
+PROJECT=set_your_project
 # set region and zone
-ZONE=europe-west2-a
+ZONE=set_your_zone
 
 # Server
 SERVER=kubeadm-solo-cluster
