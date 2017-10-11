@@ -1,5 +1,5 @@
 # Kubernetes version
-K8S_VERSION=stable-1.7
+K8S_VERSION=stable-1.8
 
 # Google Cloud settings
 # set project
