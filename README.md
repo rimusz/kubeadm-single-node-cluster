@@ -24,46 +24,52 @@ $ ./delete_cluster.sh
 ```
 This command will delete single node Kuberntes cluster VM, firewall rule and `kubeadm-single-node-cluster.conf` file.
 
-
 ## Tutorial
 
 Create a single compute instance:
 
-```
-gcloud compute instances create kubeadm-solo-cluster \
+```bash
+gcloud compute instances create kubeadm-single-node-cluster \
   --can-ip-forward \
   --image-family ubuntu-1704 \
   --image-project ubuntu-os-cloud \
   --machine-type n1-standard-4 \
-  --metadata kubernetes-version=stable-1.7,startup-script-url=https://raw.githubusercontent.com/rimusz/kubeadm-solo-cluster/master/startup.sh \
-  --tags kubeadm-solo-cluster \
+  --metadata kubernetes-version=stable-1.8 \
+  --metadata-from-file startup-script=startup.sh \
+  --tags kubeadm-single-node-cluster \
   --scopes cloud-platform,logging-write
 ```
 
 Enable secure remote access to the Kubernetes API server:
 
 ```
-gcloud compute firewall-rules create default-allow-kubeadm-solo-cluster \
+gcloud compute firewall-rules create default-allow-kubeadm-single-node-cluster \
   --allow tcp:6443 \
-  --target-tags kubeadm-solo-cluster \
+  --target-tags kubeadm-single-node-cluster \
   --source-ranges 0.0.0.0/0
 ```
 
 Fetch the client kubernetes configuration file:
 
 ```
-gcloud compute scp kubeadm-solo-cluster:/etc/kubernetes/admin.conf \
-  kubeadm-solo-cluster.conf
+gcloud compute scp kubeadm-single-node-cluster:/etc/kubernetes/admin.conf \
+  kubeadm-single-node-cluster.conf
 ```
 
 > It may take a few minutes for the cluster to finish bootstrapping and the client config to become readable.
 
-Set the `kubeadm-solo-cluster` kubeconfig server address to the public IP address:
+Set the `KUBECONFIG` env var to point to the `kubeadm-single-node-cluster.conf` kubeconfig:
+
+```
+export KUBECONFIG=$(PWD)/kubeadm-single-node-cluster.conf
+```
+
+Set the `kubeadm-single-node-cluster` kubeconfig server address to the public IP address:
 
 ```
 kubectl config set-cluster kubernetes \
-  --kubeconfig kubeadm-solo-cluster.conf \
-  --server https://$(gcloud compute instances describe kubeadm-solo-cluster \
+  --kubeconfig kubeadm-single-node-cluster.conf \
+  --server https://$(gcloud compute instances describe kubeadm-single-node-cluster \
      --format='value(networkInterfaces.accessConfigs[0].natIP)'):6443
 ```
 
@@ -72,38 +78,48 @@ kubectl config set-cluster kubernetes \
 List the Kubernetes nodes:
 
 ```
-kubectl get nodes --kubeconfig kubeadm-solo-cluster.conf
+kubectl get nodes
+```
+``` 
+NAME                          STATUS    ROLES     AGE       VERSION
+kubeadm-single-node-cluster   Ready     master    35m       v1.8.0
+```
+
+The node version reflects the `kubelet` version, therefore it might be different
+than the `kubernetes-version` specified above.
+
+Find out Kubernetes API server version:
+
+```
+kubectl version --short
 ```
 ```
-NAME                          STATUS    AGE       VERSION
-kubeadm-solo-cluster   Ready     14m       v1.7.0
+Client Version: v1.8.0
+Server Version: v1.8.0
 ```
 
 Create a nginx deployment:
 
 ```
-kubectl run nginx --image nginx:1.13 --port 80 \
-  --kubeconfig kubeadm-solo-cluster.conf
+kubectl run nginx --image nginx:1.13 --port 80
 ```
 
 Expose the nginx deployment:
 
 ```
-kubectl expose deployment nginx \
-  --type LoadBalancer \
-  --kubeconfig kubeadm-solo-cluster.conf
+kubectl expose deployment nginx --type LoadBalancer
 ```
 
 ## Cleanup
 
 ```
-gcloud compute instances delete kubeadm-solo-cluster
+gcloud compute instances delete kubeadm-single-node-cluster
 ```
 
 ```
-gcloud compute firewall-rules delete default-allow-kubeadm-solo-cluster
+gcloud compute firewall-rules delete default-allow-kubeadm-single-node-cluster
 ```
 
 ```
-rm kubeadm-solo-cluster.conf
+rm kubeadm-single-node-cluster.conf
 ```
