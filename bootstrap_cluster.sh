@@ -19,7 +19,8 @@ gcloud compute instances create ${SERVER} \
   --metadata-from-file=startup-script=startup.sh \
   --can-ip-forward \
   --tags ${SERVER} \
-  --scopes cloud-platform,logging-write,compute-rw
+  --scopes cloud-platform,logging-write,compute-rw \
+  --preemptible
 echo
 
 echo "Waiting for ${SERVER} to be ready..."
